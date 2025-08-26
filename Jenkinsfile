@@ -2,30 +2,18 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Security Scan') {
+        stage('Trivy Scan') {
             steps {
-                echo 'Running gosec security scan...'
                 sh '''
-                    # Install Go if not present
-                    if ! command -v go >/dev/null 2>&1; then
-                        GO_VERSION=1.22.3
-                        curl -LO https://go.dev/dl/go$GO_VERSION.linux-amd64.tar.gz
-                        mkdir -p "$HOME/go"
-                        tar -C "$HOME" -xzf go$GO_VERSION.linux-amd64.tar.gz
-                        export PATH="$HOME/go/bin:$PATH"
-                    else
-                        export PATH="$HOME/go/bin:$PATH"
-                    fi
-                    # Install gosec if not present
-                    if ! command -v gosec >/dev/null 2>&1; then
-                        go install github.com/securego/gosec/v2/cmd/gosec@latest
-                        export PATH=$PATH:$(go env GOPATH)/bin
-                    fi
-                    gosec -fmt sarif ./...
+                if ! command -v trivy > /dev/null; then
+                  echo "Installing Trivy..."
+                  curl -sL https://github.com/aquasecurity/trivy/releases/download/v0.65.0/trivy_0.65.0_Linux-64bit.tar.gz | tar zxvf - -C /tmp
+                  mv /tmp/trivy ./trivy
+                  chmod +x ./trivy
+                fi
+                ./trivy fs . --format sarif 
                 '''
             }
-        }
-
+        }       
     }
 }
