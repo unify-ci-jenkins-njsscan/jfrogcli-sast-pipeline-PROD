@@ -8,19 +8,19 @@ pipeline {
     JFROG_CLI_PATH = "${env.WORKSPACE}/jf"
   }
 
-  stage('Install JFrog CLI') {
-  steps {
-    sh '''
-      if [ ! -f "$WORKSPACE/jf" ]; then
-          echo ":package: Downloading JFrog CLI to workspace..."
-          curl -fL https://releases.jfrog.io/artifactory/jfrog-cli/v2-jf/latest/jfrog/jfrog-cli-linux-amd64/jf -o jf
-          chmod +x jf
-      fi
-      ./jf --version
-    '''
-  }
-}
-
+  stages {
+    stage('Install JFrog CLI') {
+      steps {
+        sh '''
+          if [ ! -f "$WORKSPACE/jf" ]; then
+              echo ":package: Downloading JFrog CLI to workspace..."
+              curl -fL https://releases.jfrog.io/artifactory/jfrog-cli/v2-jf/latest/jfrog/jfrog-cli-linux-amd64/jf -o jf
+              chmod +x jf
+          fi
+          ./jf --version
+        '''
+      }
+    }
 
     stage('Configure JFrog CLI') {
       steps {
