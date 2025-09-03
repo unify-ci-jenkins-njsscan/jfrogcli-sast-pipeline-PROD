@@ -43,6 +43,17 @@ pipeline {
       }
     }
 
+    stage('Debug Directory Contents') {
+      steps {
+        sh '''
+          echo "🔍 Listing contents of SCA project dir:"
+          ls -la "${SCA_PROJECT_DIR}"
+          echo "🔍 Counting files:"
+          find "${SCA_PROJECT_DIR}" | wc -l
+        '''
+      }
+    }
+
     stage('Run SCA Scan on test-workflow-ninja') {
       steps {
         dir("${env.SCA_PROJECT_DIR}") {
