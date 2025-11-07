@@ -97,7 +97,7 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts artifacts: 'flask_jfrog_sast.sarif', fingerprint: true
+      archiveArtifacts artifacts: 'vulnado/flask_jfrog_sast.sarif', fingerprint: true
       echo "📄 SARIF file archived as 'flask_jfrog_sast.sarif'"
     }
   }
