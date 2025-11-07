@@ -2,9 +2,9 @@ pipeline {
   agent any
 
   environment {
-    JFROG_SERVER = "https://cbjfrog.saas-preprod.beescloud.com"
+    JFROG_SERVER = "https://cbunifydev.jfrog.io"  // JFrog Cloud URL with sast scanner
     JFROG_CLI_PATH = "${env.WORKSPACE}/jf"
-    SCA_PROJECT_DIR = "${env.WORKSPACE}/test-workflow-ninja"
+    SAST_PROJECT_DIR = "${env.WORKSPACE}/vulnado"
   }
 
   stages {
@@ -27,12 +27,12 @@ pipeline {
     stage('Configure JFrog CLI') {
       steps {
         withCredentials([usernamePassword(
-          credentialsId: 'jfrog-cli-credentials',
+          credentialsId: 'jfrog-cloud-credentials',
           usernameVariable: 'JF_USER',
           passwordVariable: 'JF_PASS'
         )]) {
           sh '''
-            echo ":key: Configuring JFrog CLI with credentials..."
+            echo ":key: Configuring JFrog CLoud CLI with credentials..."
             ./jf config add cbjfrog-server-jenkins \
               --url=${JFROG_SERVER} \
               --user=$JF_USER \
@@ -43,26 +43,21 @@ pipeline {
       }
     }
 
-    stage('Debug Directory Contents') {
+    stage('Debug Project Directory') {
       steps {
         sh '''
-          echo "🔍 Listing contents of SCA project dir:"
-          ls -la "${SCA_PROJECT_DIR}"
-          echo "🔍 Counting files:"
-          find "${SCA_PROJECT_DIR}" | wc -l
+          echo "🔍 Listing contents of project directory:"
+          ls -la "${SAST_PROJECT_DIR}"
         '''
       }
     }
 
-    stage('Run SCA Scan on test-workflow-ninja') {
+    stage('Run SAST Scan') {
       steps {
-        dir("${env.SCA_PROJECT_DIR}") {
+        dir("${env.SAST_PROJECT_DIR}") {
           sh '''
-            echo ":wrench: Using portable Go and Node.js..."
-            export PATH=$PWD/tools/go/bin:$PWD/tools/node/bin:$PATH
-
-            echo ":mag: Running SCA scan..."
-            ../jf audit . --sca --format sarif > ../jfrog-sarif-sca-results.sarif || true
+            echo ":mag: Running JFrog SAST scan..."
+            ../jf audit . --sast --format sarif > ../jfrog-sarif-sast-results.sarif || true
           '''
         }
       }
@@ -70,14 +65,15 @@ pipeline {
 
     stage('Display SARIF Output') {
       steps {
-        sh 'cat jfrog-sarif-sca-results.sarif || echo "No SARIF output found."'
+        sh 'cat jfrog-sarif-sast-results.sarif || echo "No SARIF output found."'
       }
     }
   }
 
   post {
     always {
-      archiveArtifacts artifacts: 'jfrog-sarif-sca-results.sarif', fingerprint: true
+      archiveArtifacts artifacts: 'jfrog-sarif-sast-results.sarif', fingerprint: true
+      echo "📄 SARIF file archived as 'jfrog-sarif-sast-results.sarif'"
     }
   }
 }
