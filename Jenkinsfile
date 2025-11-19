@@ -103,7 +103,7 @@ pipeline {
                       artifacts: "fake-jfrog-sast-findings.sarif",
                       format: "sarif",
                       scanner: "jfrog-xray-sast",
-                      archive: false
+                      archive: true
                   )
               } else {
                   error "fake-jfrog-sast-findings.sarif not found!"
