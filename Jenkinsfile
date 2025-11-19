@@ -97,7 +97,7 @@ pipeline {
     stage('Register Security Scan') {
       steps {
           script {
-              if (fileExists("fake-jfrog-sast-findings.sarif")) {
+              if (fileExists("WebGoat/fake-jfrog-sast-findings.sarif")) {
                   echo "File exists, registering scan..."
                   registerSecurityScan(
                       artifacts: "WebGoat/fake-jfrog-sast-findings.sarif",
