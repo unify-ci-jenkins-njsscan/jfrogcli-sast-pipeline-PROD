@@ -79,7 +79,7 @@ pipeline {
         dir("${env.SAST_PROJECT_DIR}") {
           sh '''
             echo ":mag: Running JFrog SAST scan..."
-            "$JFROG_CLI_PATH" aud --sast --format=sarif . > WebGoat_jfrog_sast.sarif || true
+            "$JFROG_CLI_PATH" aud --sast --format=sarif . > main_jfrog_sast.sarif || true
           '''
         }
       }
@@ -89,17 +89,35 @@ pipeline {
       steps {
         sh '''
           echo "📜 SAST SARIF Output Preview:"
-          head -n 50 ${SAST_PROJECT_DIR}/WebGoat_jfrog_sast.sarif || echo "No SARIF output found."
+          head -n 50 ${SAST_PROJECT_DIR}/main_jfrog_sast.sarif || echo "No SARIF output found."
         '''
       }
     }
   }
 
-  post {
-    always {
-      archiveArtifacts artifacts: '**/WebGoat_jfrog_sast.sarif', fingerprint: true
-      echo "📄 SARIF file archived as 'WebGoat_jfrog_sast.sarif'"
-    }
-  }
-}
+   stage('Register Security Scan') {
+            steps {
+                script {
+                    if (fileExists("fake-jfrog-sast-findings.json")) {
+                        echo "File exists, registering scan..."
+                        registerSecurityScan(
+                            artifacts: "fake-jfrog-sast-findings.json",
+                            format: "",
+                            archive: false
+                        )
+                    } else {
+                        error "fake-jfrog-sast-findings.json not found!"
+                    }
+                }
+            }
+        }
+
+//   post {
+//     always {
+//       archiveArtifacts artifacts: '**/WebGoat_jfrog_sast.sarif', fingerprint: true
+//       echo "📄 SARIF file archived as 'WebGoat_jfrog_sast.sarif'"
+//     }
+//   }
+// }
+ 
  
