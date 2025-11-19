@@ -93,24 +93,26 @@ pipeline {
         '''
       }
     }
+
+    stage('Register Security Scan') {
+      steps {
+          script {
+              if (fileExists("fake-jfrog-sast-findings.json")) {
+                  echo "File exists, registering scan..."
+                  registerSecurityScan(
+                      artifacts: "fake-jfrog-sast-findings.json",
+                      format: "",
+                      archive: false
+                  )
+              } else {
+                  error "fake-jfrog-sast-findings.json not found!"
+              }
+          }
+      }
+    }
   }
 
-   stage('Register Security Scan') {
-            steps {
-                script {
-                    if (fileExists("fake-jfrog-sast-findings.json")) {
-                        echo "File exists, registering scan..."
-                        registerSecurityScan(
-                            artifacts: "fake-jfrog-sast-findings.json",
-                            format: "",
-                            archive: false
-                        )
-                    } else {
-                        error "fake-jfrog-sast-findings.json not found!"
-                    }
-                }
-            }
-        }
+   
 }
 //   post {
 //     always {
