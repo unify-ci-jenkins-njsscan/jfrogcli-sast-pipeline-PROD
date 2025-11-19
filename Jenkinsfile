@@ -111,7 +111,7 @@ pipeline {
                 }
             }
         }
-
+}
 //   post {
 //     always {
 //       archiveArtifacts artifacts: '**/WebGoat_jfrog_sast.sarif', fingerprint: true
