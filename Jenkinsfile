@@ -95,23 +95,24 @@ pipeline {
     }
 
     stage('Register Fake Security Scan') {
-            steps {
-                script {
-                    def fakeSarif = "${env.SAST_PROJECT_DIR}/fake-jfrog-sast-findings.sarif"
-                    if (fileExists(fakeSarif)) {
-                        echo "✅ Fake SARIF file exists. Registering scan..."
-                        registerSecurityScan(
-                            artifacts: fakeSarif,
-                            format: "sarif",
-                            scanner: "jfrog-xray-sast",
-                            archive: true
-                        )
-                    } else {
-                        error "❌ Fake SARIF file not found at ${fakeSarif}!"
-                    }
-                }
-            }
-        }
+  steps {
+    script {
+      def globPattern = "WebGoat/fake-jfrog-sast-findings.sarif"
+      if (fileExists("${env.WORKSPACE}/${globPattern}")) {
+        echo "✅ Fake SARIF file exists. Registering scan..."
+        registerSecurityScan(
+          artifacts: globPattern,     
+          format: "sarif",
+          scanner: "jfrog-xray-sast",
+          archive: true
+        )
+      } else {
+        error "❌ Fake SARIF file not found using glob: ${globPattern}!"
+      }
+    }
+  }
+}
+
   }
 
    
