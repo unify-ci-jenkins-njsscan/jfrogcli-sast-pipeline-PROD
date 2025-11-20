@@ -5,37 +5,37 @@
     {
       "tool": {
         "driver": {
-          "name": "JFrog SAST",
+          "name": "JFrog SAST (Fake)",
           "rules": [
             {
               "id": "java-sql-injection",
+              "name": "Java SQL Injection",
               "shortDescription": { "text": "SQL Injection" },
               "fullDescription": { "text": "Unsanitized user input in SQL query." },
               "properties": {
-                "cweId": "CWE-89",
-                "severity": "High"
-              }
-            },
-            {
-              "id": "java-path-traversal",
-              "shortDescription": { "text": "Path Traversal" },
-              "fullDescription": { "text": "User-controlled file path." },
-              "properties": {
-                "cweId": "CWE-22",
-                "severity": "Medium"
+                "severity": "High",
+                "cwe": "CWE-89"
               }
             }
           ]
         }
       },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
       "results": [
         {
           "ruleId": "java-sql-injection",
+          "ruleIndex": 0,
           "level": "error",
           "message": { "text": "SQL query constructed with untrusted input." },
-          "properties": {
-            "cweId": "CWE-89",
-            "severity": "High"
+          "fingerprints": {
+            "unique_finding_fingerprint": "abc123fakefingerprint"
+          },
+          "partialFingerprints": {
+            "unique_finding_fingerprint": "abc123fakefingerprint"
           },
           "locations": [
             {
@@ -43,26 +43,13 @@
                 "artifactLocation": {
                   "uri": "src/main/java/com/example/UserController.java"
                 },
-                "region": { "startLine": 42, "startColumn": 8 }
-              }
-            }
-          ]
-        },
-        {
-          "ruleId": "java-path-traversal",
-          "level": "warning",
-          "message": { "text": "File path includes user-controlled data." },
-          "properties": {
-            "cweId": "CWE-22",
-            "severity": "Medium"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/main/java/com/example/FileService.java"
-                },
-                "region": { "startLine": 88, "startColumn": 4 }
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 8,
+                  "snippet": {
+                    "text": "String query = \"SELECT * FROM users WHERE id = \" + userId;"
+                  }
+                }
               }
             }
           ]
