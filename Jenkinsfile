@@ -95,22 +95,26 @@ pipeline {
     }
 
 stage("Register Fake Security Scan") {
+  steps {
     dir("WebGoat") {
-        script {
-            def file = "fake-jfrog-sast-findings.sarif"
-            if (fileExists(file)) {
-                echo "✅ Fake SARIF file exists. Registering scan..."
+      script {
+        def file = "fake-jfrog-sast-findings.sarif"
 
-                registerSecurityScan(
-                    file: file,
-                    format: "sarif",
-                    scanner: "jfrog-xray-sast"
-                )
-            } else {
-                error "❌ Fake SARIF file not found at ${pwd()}"
-            }
+        if (fileExists(file)) {
+          echo "✅ Fake SARIF file exists. Registering scan..."
+
+          registerSecurityScan(
+            file: file,
+            format: "sarif",
+            scanner: "jfrog-xray-sast",
+            archive: true
+          )
+        } else {
+          error "❌ Fake SARIF file NOT found at ${pwd()}"
         }
+      }
     }
+  }
 }
 
   }
