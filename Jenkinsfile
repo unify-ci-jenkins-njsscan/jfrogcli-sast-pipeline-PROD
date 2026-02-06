@@ -88,6 +88,16 @@ pipeline {
         }
       }
     }
+    stage('Security Scan') {
+            steps {
+                registerSecurityScan(
+                    // Security Scan to include
+                    artifacts: "main_jfrog_sast.sarif",
+                    format: "sarif",
+                    archive: true
+                )
+            }
+        }
 
     stage('Display SARIF Output') {
       steps {
