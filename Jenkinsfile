@@ -8,9 +8,9 @@ pipeline {
     JFROG_SERVER_ID = "cbjfrog-server-jenkins"   // Reusing the same config name
   }
   
-  triggers {
-        cron '15 01 * * 1-5' // Runs at 01:15 on every day-of-week from Monday through Friday
-         }
+  // triggers {
+  //       cron '15 01 * * 1-5' // Runs at 01:15 on every day-of-week from Monday through Friday
+  //        }
 
   stages {
     stage('Install JFrog CLI') {
