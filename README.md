@@ -1,3 +1,2 @@
 # jenkins sarif test repo
-
-Test repo for Jenkin ++
+Test repo for Jenkin ++.
