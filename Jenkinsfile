@@ -51,7 +51,7 @@ pipeline {
 
             # Use this configuration
             "$JFROG_CLI_PATH" c use ${JFROG_SERVER_ID}
-            "$JFROG_CLI_PATH" rt ping
+            // "$JFROG_CLI_PATH" rt ping
           '''
         }
       }
